@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Consulta NCM de Peças</title>
+  <style>
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  h1 {
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+    font-size: 28px;
+    background: rgba(0,0,0,0.3);
+    border-bottom: 2px solid #fff;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    text-align: center;
+  }
+
+  #busca {
+    width: 70%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    margin-right: 10px;
+  }
+
+  #btnBuscar, #btnTema {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  #btnBuscar {
+    background: #00c853;
+    color: #fff;
+    margin-top: 10px;
+  }
+
+  #btnBuscar:hover {
+    background: #009624;
+  }
+
+  #btnTema {
+    background: #2196f3;
+    color: #fff;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+
+  #btnTema:hover {
+    background: #0d47a1;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+    color: #333;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  th, td {
+    padding: 12px;
+    text-align: left;
+  }
+
+  th {
+    background: #00c853;
+    color: #fff;
+    font-size: 15px;
+  }
+
+  tr:nth-child(even) {
+    background: #f2f2f2;
+  }
+
+  tr:hover {
+    background: #e0f7fa;
+  }
+
+  /* Dark Mode */
+  body.dark {
+    background: #121212;
+    color: #e0e0e0;
+  }
+
+  body.dark h1 {
+    background: #1e1e1e;
+    border-bottom: 2px solid #444;
+  }
+
+  body.dark .container {
+    background: #1e1e1e;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+  }
+
+  body.dark table {
+    background: #1e1e1e;
+    color: #e0e0e0;
+  }
+
+  body.dark th {
+    background: #333;
+    color: #fff;
+  }
+
+  body.dark tr:nth-child(even) {
+    background: #2a2a2a;
+  }
+
+  body.dark tr:hover {
+    background: #333;
+  }
+
+  body.dark #busca {
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #555;
+  }
+  </style>
+</head>
+<body>
+  <h1>Consulta de NCM de Peças</h1>
+
+  <div class="container">
+    <input id="busca" type="text" placeholder="Digite nome, modelo ou descrição">
+    <button id="btnBuscar">Buscar</button>
+    <button id="btnTema">Alternar Tema</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Peça</th>
+        <th>Modelo</th>
+        <th>Descrição</th>
+        <th>NCM</th>
+      </tr>
+    </thead>
+    <tbody id="resultado"></tbody>
+  </table>
+
+  <script>
+    // Catálogo simples
+    const dados = [
+      { nome:"Rolamento", modelo:"6203", descricao:"Rolamento de esferas", ncm:"8482.10.10" },
+      { nome:"Filtro de oleo", modelo:"", descricao:"Filtro para motor diesel", ncm:"8421.23.00" },
+      { nome:"Filtro de combustivel", modelo:"", descricao:"Filtro para sistema de injecao", ncm:"8421.23.00" },
+      { nome:"Filtro de ar", modelo:"", descricao:"Filtro de ar do motor", ncm:"8421.31.00" },
+      { nome:"Correia", modelo:"A42", descricao:"Correia trapezoidal", ncm:"4010.11.00" },
+      { nome:"Retentor", modelo:"TC", descricao:"Retentor de oleo", ncm:"4016.93.00" },
+      { nome:"Bomba de oleo", modelo:"", descricao:"Lubrificacao do motor", ncm:"8413.30.00" },
+      { nome:"Bomba dagua", modelo:"", descricao:"Sistema de arrefecimento", ncm:"8413.91.00" },
+      { nome:"Pistao", modelo:"", descricao:"Pistao de motor Scania", ncm:"8409.91.90" },
+      { nome:"Aneis de pistao", modelo:"", descricao:"Conjunto de aneis", ncm:"8409.91.90" },
+      { nome:"Valvula", modelo:"", descricao:"Valvula de admissao/escape", ncm:"8409.99.00" },
+      { nome:"Comando de valvulas", modelo:"", descricao:"Arvore de comando", ncm:"8409.91.90" },
+      { nome:"Radiador", modelo:"", descricao:"Radiador de motor Scania", ncm:"8419.50.00" },
+      { nome:"Turbocompressor", modelo:"", descricao:"Turbo para motor Scania", ncm:"8414.59.10" },
+      { nome:"Motor de partida", modelo:"", descricao:"Arranque eletrico", ncm:"8501.20.00" },
+      { nome:"Alternador", modelo:"", descricao:"Gerador eletrico", ncm:"8501.31.00" },
+      { nome:"Biela", modelo:"", descricao:"Biela de motor", ncm:"8409.91.90" },
+      { nome:"Virabrequim", modelo:"", descricao:"Eixo virabrequim", ncm:"8409.91.90" },
+      { nome:"Cabecote", modelo:"", descricao:"Cabecote de motor Scania", ncm:"8409.91.90" },
+      { nome:"Carter", modelo:"", descricao:"Reservatorio de oleo", ncm:"8409.91.90" },
+      { nome:"Coletor de admissao", modelo:"", descricao:"Coletor de admissao de ar", ncm:"8409.91.90" },
+      { nome:"Coletor de escape", modelo:"", descricao:"Coletor de gases", ncm:"8409.91.90" },
+      { nome:"Bomba injetora", modelo:"", descricao:"Bomba de combustivel", ncm:"8413.30.00" },
+      { nome:"Injetor", modelo:"", descricao:"Injetor de combustivel", ncm:"8409.91.90" },
+      { nome:"Sensor de temperatura", modelo:"", descricao:"Sensor do motor", ncm:"9025.19.00" },
+      { nome:"Sensor de pressao", modelo:"", descricao:"Sensor de oleo", ncm:"9026.20.00" },
+      { nome:"Mangueira de radiador", modelo:"", descricao:"Mangueira de arrefecimento", ncm:"4009.32.00" },
+      { nome:"Mangueira de combustivel", modelo:"", descricao:"Mangueira de alimentacao", ncm:"4009.32.00" },
+      { nome:"Polia", modelo:"", descricao:"Polia de comando", ncm:"8483.50.90" },
+      { nome:"Tensor de correia", modelo:"", descricao:"Tensor automatico", ncm:"8483.50.90" },
+      { nome:"Eixo comando", modelo:"", descricao:"Eixo de comando de valvulas", ncm:"8409.91.90" },
+      { nome:"Eixo balanceiro", modelo:"", descricao:"Eixo balanceador", ncm:"8409.91.90" },
+      { nome:"Junta de cabecote", modelo:"", descricao:"Junta metalica", ncm:"8484.10.00" },
+      { nome:"Junta de carter", modelo:"", descricao:"Junta de vedacao", ncm:"8484.10.00" },
+      { nome:"Junta de admissao", modelo:"", descricao:"Junta de coletor", ncm:"8484.10.00" },
+      { nome:"Junta de escape", modelo:"", descricao:"Junta de coletor", ncm:"8484.10.00" },
+      { nome:"Compressor de ar", modelo:"", descricao:"Compressor auxiliar", ncm:"8414.80.00" },
+      { nome:"Ventoinha", modelo:"", descricao:"Ventilador de arrefecimento", ncm:"8414.59.90" },
+      { nome:"Termostato", modelo:"", descricao:"Controle de temperatura", ncm:"8481.80.00" },
+      { nome:"Bomba de vacuo", modelo:"", descricao:"Bomba auxiliar", ncm:"8414.10.00" },
+      { nome:"Eixo intermediario", modelo:"", descricao:"Eixo secundario", ncm:"8409.91.90" },
+      { nome:"Suporte de motor", modelo:"", descricao:"Coxim de motor", ncm:"8708.30.90" },
+      { nome:"Parafuso", modelo:"M8x30", descricao:"Parafuso de fixacao", ncm:"7318.15.00" },
+      { nome:"Porca", modelo:"M8", descricao:"Porca sextavada", ncm:"7318.16.00" },
+      { nome:"Arruela", modelo:"", descricao:"Arruela lisa", ncm:"7318.21.00" },
+      { nome:"Chaveta", modelo:"", descricao:"Chaveta de fixacao", ncm:"7318.29.00" },
+      { nome:"Anel de vedacao", modelo:"OR25", descricao:"O-ring de borracha", ncm:"4016.93.00" },
+      { nome:"Espaçador", modelo:"", descricao:"Espacador de polia", ncm:"8483.90.00" },
+      { nome:"Engrenagem", modelo:"", descricao:"Engrenagem de transmissao", ncm:"8483.40.10" },
+      { nome:"Tampa de valvula", modelo:"", descricao:"Tampa superior", ncm:"8409.91.90" }
+    ];
+
+    const busca = document.getElementById("busca");
+    const btn = document.getElementById("btnBuscar");
+    const resultado = document.getElementById("resultado");
+    const btnTema = document.getElementById("btnTema");
+
+    function filtrar() {
+      const termo = busca.value.toLowerCase();
+      resultado.innerHTML = "";
+      dados.filter(item =>
+        item.nome.toLowerCase().includes(termo) ||
+        item.modelo.toLowerCase().includes(termo) ||
+        item.descricao.toLowerCase().includes(termo) ||
+        item.ncm.toLowerCase().includes(termo)
+      ).forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${item.nome}</td><td>${item.modelo}</td><td>${item.descricao}</td><td>${item.ncm}</td>`;
+        resultado.appendChild(tr);
+      });
+    }
+
+    btn.addEventListener("click", filtrar);
+    busca.addEventListener("keydown", e => { if(e.key==="Enter") filtrar(); });
+
+    // Alternar tema
+    btnTema.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+  </script>
+</body>
+</html>
