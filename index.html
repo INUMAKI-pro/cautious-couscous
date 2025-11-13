@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Consulta NCM de Peças</title>
   <style>
   body {
@@ -140,6 +141,30 @@
     color: #fff;
     border: 1px solid #555;
   }
+
+  
+    /* ... seu CSS atual ... */
+
+    /* Responsividade para celular */
+    @media (max-width: 768px) {
+      #busca {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      #btnBuscar, #btnTema {
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 8px;
+      }
+    }
   </style>
 </head>
 <body>
